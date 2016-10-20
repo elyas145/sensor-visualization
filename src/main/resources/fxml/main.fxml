@@ -5,7 +5,7 @@
 
 <TabPane maxHeight="300.0" maxWidth="400.0" minHeight="300.0" minWidth="400.0" prefHeight="300.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Elyas.view.MainController">
    <tabs>
-      <Tab text="Expirement" />
-      <Tab text="Graphs" />
+      <Tab fx:id="expirementTab" closable="false" text="Expirement" />
+      <Tab fx:id="graphsTab" closable="false" text="Graphs" />
    </tabs>
 </TabPane>

@@ -50,6 +50,8 @@ public class App extends Application {
 					}
 				}
 			});
+			
+			appCtrl.initializeDrawArea();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
