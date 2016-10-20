@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="5.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <HBox alignment="CENTER_LEFT" spacing="5.0">
+         <children>
+            <Label text="Number of Sensors    " />
+            <TextField fx:id="txtSensorNumber" prefColumnCount="3" text="10" />
+            <Label text="Increment By" />
+            <TextField fx:id="txtSensorIncrement" prefColumnCount="3" text="-2" />
+         </children>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+      </HBox>
+      <HBox alignment="CENTER_LEFT" spacing="5.0">
+         <children>
+            <Label text="Radius                        " />
+            <TextField fx:id="txtRadius" prefColumnCount="3" text="0.1" />
+            <Label text="Increment By" />
+            <TextField fx:id="txtRadiusIncrement" prefColumnCount="3" text="0.1" />
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_LEFT" spacing="5.0">
+         <children>
+            <Label text="Coverage Range from" />
+            <TextField fx:id="txtRangeFrom" prefColumnCount="3" text="0" />
+            <Label text="        To         " />
+            <TextField fx:id="txtRangeTo" prefColumnCount="3" text="1" />
+         </children>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+      </HBox>
+      <HBox alignment="CENTER_LEFT" spacing="5.0">
+         <children>
+            <Label text="X Axis                         " />
+            <ComboBox fx:id="cmbXAxis" prefWidth="50.0" />
+            <Label text="     Y Axis      " />
+            <ComboBox fx:id="cmbYAxis" disable="true" prefWidth="50.0" />
+         </children>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+      </HBox>
+      <HBox alignment="CENTER_LEFT" spacing="5.0">
+         <children>
+            <Label text="Number of Runs Per Value                               " />
+            <TextField prefColumnCount="3" />
+         </children>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+      </HBox>
+   </children>
+   <padding>
+      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+   </padding>
+</VBox>
