@@ -1,5 +1,6 @@
 package Elyas.view;
 
+import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,13 +10,20 @@ import java.util.Random;
 import java.util.ResourceBundle;
 
 import Elyas.model.Sensor;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
+import javafx.util.Duration;
 
 public class DrawController implements Initializable {
 
@@ -113,6 +121,11 @@ public class DrawController implements Initializable {
 			circle.setLayoutX(startLine.getEndX() + (s.getPosition()*endLine.getEndX()));
 			circle.setRadius(s.getRadius()*rangeLine.getEndX());
 			drawPane.getChildren().add(circle);
+			circle.setOnMouseEntered((e)->circle.setFill(Color.BLUE));
+			circle.setOnMouseExited((e)->circle.setFill(Color.RED));
+			Tooltip tooltip = new Tooltip(s.getPosition()+"");
+			hackTooltipStartTiming(tooltip);
+			Tooltip.install(circle, tooltip);
 		}
 		drawPane.getChildren().add(startLine);
 		drawPane.getChildren().add(endLine);
@@ -121,7 +134,26 @@ public class DrawController implements Initializable {
 		drawPane.getChildren().add(lblRangeEnd);
 	}
 
+	
+	
 	public void setSensorRadius(Double i) {
 		currentRadius = i;
+	}
+	
+	private void hackTooltipStartTiming(Tooltip tooltip) {
+	    try {
+	        Field fieldBehavior = tooltip.getClass().getDeclaredField("BEHAVIOR");
+	        fieldBehavior.setAccessible(true);
+	        Object objBehavior = fieldBehavior.get(tooltip);
+
+	        Field fieldTimer = objBehavior.getClass().getDeclaredField("activationTimer");
+	        fieldTimer.setAccessible(true);
+	        Timeline objTimer = (Timeline) fieldTimer.get(objBehavior);
+
+	        objTimer.getKeyFrames().clear();
+	        objTimer.getKeyFrames().add(new KeyFrame(new Duration(5)));
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
 	}
 }
