@@ -107,34 +107,39 @@ public class DrawController implements Initializable {
 			sensors.remove(sensors.size() - 1);
 		}
 		for (Sensor s : sensors) {
-			// s.setPosition(rangeStart + (rangeEnd - rangeStart) *
-			// random.nextDouble());
-			s.setPosition(0.0);
+			
+			s.setPosition(rangeStart + (rangeEnd - rangeStart) * random.nextDouble());
+			// s.setPosition(0.0);
 		}
 		updateDrawing();
 	}
 
 	private void updateDrawing() {
 		this.drawPane.getChildren().clear();
-		for (Sensor s : sensors) {
-			Circle circle = new Circle();
-			circle.setFill(Color.RED);
-			circle.setStroke(Color.BLACK);
-			circle.setCenterY(rangeLine.getEndY());
-			circle.setCenterX(startLine.getEndX() + (s.getPosition() * endLine.getEndX()));
-			circle.setRadius(s.getRadius() * rangeLine.getEndX());
-			drawPane.getChildren().add(circle);
-			circle.setOnMouseEntered((e) -> circle.setFill(Color.BLUE));
-			circle.setOnMouseExited((e) -> circle.setFill(Color.RED));
-			Tooltip tooltip = new Tooltip(s.getPosition() + "");
-			hackTooltipStartTiming(tooltip);
-			Tooltip.install(circle, tooltip);
-		}
 		drawPane.getChildren().add(startLine);
 		drawPane.getChildren().add(endLine);
 		drawPane.getChildren().add(rangeLine);
 		drawPane.getChildren().add(lblRangeStart);
 		drawPane.getChildren().add(lblRangeEnd);
+		for (Sensor s : sensors) {
+			Circle circle = new Circle();
+			circle.setFill(Color.RED);
+			circle.setStroke(Color.BLACK);
+			circle.setRadius(s.getRadius() * rangeLine.getEndX());
+			circle.setCenterY(rangeLine.getEndY());
+			circle.setCenterX(
+					rangeLine.getStartX() + ((rangeLine.getEndX() - rangeLine.getStartX()) * s.getPosition()));
+
+			circle.setOnMouseEntered((e) -> circle.setFill(Color.BLUE));
+			circle.setOnMouseExited((e) -> circle.setFill(Color.RED));
+
+			Tooltip tooltip = new Tooltip(s.getPosition() + "");
+			hackTooltipStartTiming(tooltip);
+			Tooltip.install(circle, tooltip);
+			drawPane.getChildren().add(circle);
+			circle.toBack();
+		}
+
 		drawPane.toBack();
 	}
 
