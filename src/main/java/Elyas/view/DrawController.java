@@ -49,6 +49,7 @@ public class DrawController implements Initializable {
 	private Random random;
 	private double rangeEnd;
 	private double rangeStart;
+	private double sensorOffset = 10;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -99,31 +100,33 @@ public class DrawController implements Initializable {
 		while (n > sensors.size()) {
 			Sensor sensor = new Sensor();
 			sensor.setRadius(currentRadius);
-			
-			sensors.add(sensor);			
+
+			sensors.add(sensor);
 		}
 		while (n < sensors.size()) {
-			sensors.remove(sensors.size()-1);
+			sensors.remove(sensors.size() - 1);
 		}
-		for(Sensor s : sensors){
-			s.setPosition(rangeStart + (rangeEnd - rangeStart) * random.nextDouble());			
+		for (Sensor s : sensors) {
+			// s.setPosition(rangeStart + (rangeEnd - rangeStart) *
+			// random.nextDouble());
+			s.setPosition(0.0);
 		}
 		updateDrawing();
 	}
 
 	private void updateDrawing() {
 		this.drawPane.getChildren().clear();
-		for(Sensor s : sensors){
+		for (Sensor s : sensors) {
 			Circle circle = new Circle();
-			circle.setLayoutY(rangeLine.getEndY());
 			circle.setFill(Color.RED);
 			circle.setStroke(Color.BLACK);
-			circle.setLayoutX(startLine.getEndX() + (s.getPosition()*endLine.getEndX()));
-			circle.setRadius(s.getRadius()*rangeLine.getEndX());
+			circle.setCenterY(rangeLine.getEndY());
+			circle.setCenterX(startLine.getEndX() + (s.getPosition() * endLine.getEndX()));
+			circle.setRadius(s.getRadius() * rangeLine.getEndX());
 			drawPane.getChildren().add(circle);
-			circle.setOnMouseEntered((e)->circle.setFill(Color.BLUE));
-			circle.setOnMouseExited((e)->circle.setFill(Color.RED));
-			Tooltip tooltip = new Tooltip(s.getPosition()+"");
+			circle.setOnMouseEntered((e) -> circle.setFill(Color.BLUE));
+			circle.setOnMouseExited((e) -> circle.setFill(Color.RED));
+			Tooltip tooltip = new Tooltip(s.getPosition() + "");
 			hackTooltipStartTiming(tooltip);
 			Tooltip.install(circle, tooltip);
 		}
@@ -132,28 +135,31 @@ public class DrawController implements Initializable {
 		drawPane.getChildren().add(rangeLine);
 		drawPane.getChildren().add(lblRangeStart);
 		drawPane.getChildren().add(lblRangeEnd);
+		drawPane.toBack();
 	}
 
-	
-	
 	public void setSensorRadius(Double i) {
 		currentRadius = i;
+		for (Sensor sensor : sensors) {
+			sensor.setRadius(i);
+		}
+		updateDrawing();
 	}
-	
+
 	private void hackTooltipStartTiming(Tooltip tooltip) {
-	    try {
-	        Field fieldBehavior = tooltip.getClass().getDeclaredField("BEHAVIOR");
-	        fieldBehavior.setAccessible(true);
-	        Object objBehavior = fieldBehavior.get(tooltip);
+		try {
+			Field fieldBehavior = tooltip.getClass().getDeclaredField("BEHAVIOR");
+			fieldBehavior.setAccessible(true);
+			Object objBehavior = fieldBehavior.get(tooltip);
 
-	        Field fieldTimer = objBehavior.getClass().getDeclaredField("activationTimer");
-	        fieldTimer.setAccessible(true);
-	        Timeline objTimer = (Timeline) fieldTimer.get(objBehavior);
+			Field fieldTimer = objBehavior.getClass().getDeclaredField("activationTimer");
+			fieldTimer.setAccessible(true);
+			Timeline objTimer = (Timeline) fieldTimer.get(objBehavior);
 
-	        objTimer.getKeyFrames().clear();
-	        objTimer.getKeyFrames().add(new KeyFrame(new Duration(5)));
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
+			objTimer.getKeyFrames().clear();
+			objTimer.getKeyFrames().add(new KeyFrame(new Duration(5)));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }
