@@ -3,7 +3,9 @@ package Elyas.view;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -11,11 +13,15 @@ import java.util.ResourceBundle;
 
 import Elyas.model.Sensor;
 import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
@@ -44,7 +50,7 @@ public class DrawController implements Initializable {
 	private double width;
 	private double lineOffset = 20;
 	private double labelOffset = 10;
-	private List<Sensor> sensors;
+	private Map<Sensor, Circle> sensors;
 	private Double currentRadius;
 	private Random random;
 	private double rangeEnd;
@@ -53,8 +59,12 @@ public class DrawController implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		sensors = new ArrayList<>();
+		sensors = new HashMap<>();
 		random = new Random();
+		this.drawPane.setCache(false);
+		this.startLine.setCache(false);
+		this.endLine.setCache(false);
+		this.rangeLine.setCache(false);
 	}
 
 	public void setDrawableArea() {
@@ -100,44 +110,70 @@ public class DrawController implements Initializable {
 		while (n > sensors.size()) {
 			Sensor sensor = new Sensor();
 			sensor.setRadius(currentRadius);
+			Circle node = getDefaultSensorNode(sensor);
+			sensors.put(sensor, node);
+			drawPane.getChildren().add(node);
 
-			sensors.add(sensor);
 		}
-		while (n < sensors.size()) {
-			sensors.remove(sensors.size() - 1);
+		if (n < sensors.size()) {
+			for (Iterator<Sensor> iterator = sensors.keySet().iterator(); iterator.hasNext();) {
+				if (n < sensors.size()) {
+					iterator.next();
+					iterator.remove();
+				} else {
+					break;
+				}
+			}
 		}
-		for (Sensor s : sensors) {
-			
+		for (Sensor s : sensors.keySet()) {
 			s.setPosition(rangeStart + (rangeEnd - rangeStart) * random.nextDouble());
-			// s.setPosition(0.0);
+
 		}
 		updateDrawing();
 	}
 
-	private void updateDrawing() {
+	private Circle getDefaultSensorNode(Sensor s) {
+		Circle circle;
+		if(sensors.get(s) != null){
+			circle = sensors.get(s);
+		}else{
+			circle = new Circle();
+			circle.setCache(false);
+			circle.setOnMouseEntered((e) -> circle.setFill(Color.BLUE));
+			circle.setOnMouseExited((e) -> circle.setFill(Color.RED));
+
+			Tooltip tooltip = new Tooltip();
+			s.positionProperty().addListener(new ChangeListener<Number>() {
+				@Override
+				public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+					tooltip.setText(newValue.doubleValue() + "");
+				}
+			});
+			changeTooltipStartTiming(tooltip);
+			Tooltip.install(circle, tooltip);
+			
+		}
+		
+		circle.setFill(Color.RED);
+		circle.setStroke(Color.BLACK);
+		circle.setRadius(this.currentRadius * (rangeLine.getEndX()-rangeLine.getStartX()));
+		circle.setCenterY(rangeLine.getEndY());
+		
+		return circle;
+	}
+
+	public void updateDrawing() {
 		this.drawPane.getChildren().clear();
 		drawPane.getChildren().add(startLine);
 		drawPane.getChildren().add(endLine);
 		drawPane.getChildren().add(rangeLine);
 		drawPane.getChildren().add(lblRangeStart);
 		drawPane.getChildren().add(lblRangeEnd);
-		for (Sensor s : sensors) {
-			Circle circle = new Circle();
-			circle.setFill(Color.RED);
-			circle.setStroke(Color.BLACK);
-			circle.setRadius(s.getRadius() * rangeLine.getEndX());
-			circle.setCenterY(rangeLine.getEndY());
-			circle.setCenterX(
-					rangeLine.getStartX() + ((rangeLine.getEndX() - rangeLine.getStartX()) * s.getPosition()));
-
-			circle.setOnMouseEntered((e) -> circle.setFill(Color.BLUE));
-			circle.setOnMouseExited((e) -> circle.setFill(Color.RED));
-
-			Tooltip tooltip = new Tooltip(s.getPosition() + "");
-			hackTooltipStartTiming(tooltip);
-			Tooltip.install(circle, tooltip);
-			drawPane.getChildren().add(circle);
-			circle.toBack();
+		for (Sensor s : sensors.keySet()) {
+			sensors.get(s).setCenterX(getDrawXLocation(s));
+			getDefaultSensorNode(s);
+			drawPane.getChildren().add(sensors.get(s));
+			sensors.get(s).toBack();
 		}
 
 		drawPane.toBack();
@@ -145,13 +181,19 @@ public class DrawController implements Initializable {
 
 	public void setSensorRadius(Double i) {
 		currentRadius = i;
-		for (Sensor sensor : sensors) {
+		for (Sensor sensor : sensors.keySet()) {
 			sensor.setRadius(i);
 		}
 		updateDrawing();
 	}
 
-	private void hackTooltipStartTiming(Tooltip tooltip) {
+	/**
+	 * changes the tooltip start time.
+	 * 
+	 * @param tooltip
+	 *            the tooltip to modify.
+	 */
+	private void changeTooltipStartTiming(Tooltip tooltip) {
 		try {
 			Field fieldBehavior = tooltip.getClass().getDeclaredField("BEHAVIOR");
 			fieldBehavior.setAccessible(true);
@@ -166,5 +208,28 @@ public class DrawController implements Initializable {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public Collection<Sensor> getSensors() {
+		return sensors.keySet();
+	}
+
+	public void moveSensor(Sensor sensor, Double speed) {
+		Circle circle = sensors.get(sensor);
+		final Timeline timeline = new Timeline();
+		timeline.setCycleCount(1);
+		final KeyValue kv = new KeyValue(circle.centerXProperty(), getDrawXLocation(sensor));
+		final KeyFrame kf = new KeyFrame(Duration.millis(speed), kv);
+		timeline.getKeyFrames().add(kf);
+		timeline.play();
+	}
+
+	private double getDrawXLocation(Sensor sensor) {
+
+		return rangeLine.getStartX() + ((rangeLine.getEndX() - rangeLine.getStartX()) * sensor.getPosition());
+	}
+
+	public void setupDrawing() {
+		
 	}
 }

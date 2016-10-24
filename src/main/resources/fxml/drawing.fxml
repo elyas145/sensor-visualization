@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.shape.Line?>
 
-<Pane fx:id="drawPane" maxHeight="145.0" maxWidth="550.0" minHeight="130.0" minWidth="550.0" prefHeight="145.0" prefWidth="550.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Elyas.view.DrawController">
+<Pane fx:id="drawPane" maxHeight="145.0" maxWidth="600.0" minHeight="130.0" minWidth="600.0" prefHeight="145.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Elyas.view.DrawController">
    <children>
       <Line fx:id="rangeLine" endX="350.0" endY="72.0" startX="50.0" startY="72.0" />
       <Line fx:id="startLine" endX="350.0" endY="72.0" layoutX="10.0" layoutY="10.0" startX="50.0" startY="72.0" />

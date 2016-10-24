@@ -6,6 +6,7 @@
 package Elyas.model.algorithms;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import Elyas.model.Sensor;
@@ -15,6 +16,8 @@ public abstract class Algorithm {
 	private List<Sensor> sensors;
 	private List<MoveListener> moveListeners;
 	private List<FinishListener> finishListeners;
+	private double start;
+	private double end;
 
 	/**
 	 * 
@@ -31,15 +34,39 @@ public abstract class Algorithm {
 	public void addMoveListener(MoveListener moveListener) {
 		moveListeners.add(moveListener);
 	}
+	
+	public void addFinishListener(FinishListener listener){
+		finishListeners.add(listener);
+	}
 
 	/**
 	 * initializes the sensors to be used in this algorithm
 	 * @param sensors
+	 * @param end 
+	 * @param start 
 	 */
-	protected Algorithm(List<Sensor> sensors) {
-		this.sensors = sensors;
+	protected Algorithm(Collection<Sensor> sensors, double start, double end) {
+		this.sensors = new ArrayList(sensors);
 		moveListeners = new ArrayList<>();
 		finishListeners = new ArrayList<>();
+		this.start = start;
+		this.end = end;
+	}
+
+	protected double getStart() {
+		return start;
+	}
+
+	protected void setStart(double start) {
+		this.start = start;
+	}
+
+	protected double getEnd() {
+		return end;
+	}
+
+	protected void setEnd(double end) {
+		this.end = end;
 	}
 
 	/**
@@ -65,7 +92,7 @@ public abstract class Algorithm {
 	 * simple convenience method to run the algorithm in a separate thread.
 	 * notifies any finish listeners when the algorithm is finished executing.
 	 */
-	protected void startAlgorithm() {
+	public void startAlgorithm() {
 		Thread thread = new  Thread(()->{
 			toDo();
 			notifyFinish();

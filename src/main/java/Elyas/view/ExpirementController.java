@@ -5,6 +5,10 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import Elyas.model.AxisType;
+import Elyas.model.Sensor;
+import Elyas.model.algorithms.Algorithm;
+import Elyas.model.algorithms.BackToBack;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -15,6 +19,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -37,6 +42,10 @@ public class ExpirementController implements Initializable {
 	TextField txtRangeTo;
 	@FXML
 	ComboBox<AxisType> cmbXAxis;
+	@FXML
+	TextField txtAnimationSpeed;
+	@FXML
+	TextArea txtLog;
 
 	private DrawController drawController;
 
@@ -104,7 +113,7 @@ public class ExpirementController implements Initializable {
 				try {
 					drawController.setSensorRadius(Double.valueOf(txtRadius.getText()));
 				} catch (Exception e) {
-					txtRangeTo.setText("");
+					txtRadius.setText("");
 				}
 			}
 		});
@@ -113,7 +122,23 @@ public class ExpirementController implements Initializable {
 
 	@FXML
 	protected void btnStartAction(ActionEvent e) {
+		double from = Double.valueOf(this.txtRangeFrom.getText());
+		double to = Double.valueOf(this.txtRangeTo.getText());
+		Algorithm algorithm = new BackToBack(drawController.getSensors(), from, to);
+		algorithm.addMoveListener((sensor) -> {
+			Platform.runLater(new Runnable() {
+				@Override
+				public void run() {
+					drawController.moveSensor(sensor, Double.valueOf(txtAnimationSpeed.getText()));
+				}
+			});
+		});
+		algorithm.addFinishListener(
+				() -> txtLog.appendText("algorithm finished with " + algorithm.getNumberOfMoves() + " moves.\n"));
 		
+		txtLog.appendText("\nStarting Algorithm...\n");
+		drawController.setupDrawing();
+		algorithm.startAlgorithm();
 	}
 
 	public void initializeDrawing() {
