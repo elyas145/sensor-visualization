@@ -16,8 +16,8 @@ public abstract class Algorithm {
 	private List<Sensor> sensors;
 	private List<MoveListener> moveListeners;
 	private List<FinishListener> finishListeners;
-	private double start;
-	private double end;
+	private float start;
+	private float end;
 
 	/**
 	 * 
@@ -45,7 +45,7 @@ public abstract class Algorithm {
 	 * @param end 
 	 * @param start 
 	 */
-	protected Algorithm(Collection<Sensor> sensors, double start, double end) {
+	protected Algorithm(Collection<Sensor> sensors, float start, float end) {
 		this.sensors = new ArrayList(sensors);
 		moveListeners = new ArrayList<>();
 		finishListeners = new ArrayList<>();
@@ -53,19 +53,19 @@ public abstract class Algorithm {
 		this.end = end;
 	}
 
-	protected double getStart() {
+	protected float getStart() {
 		return start;
 	}
 
-	protected void setStart(double start) {
+	protected void setStart(float start) {
 		this.start = start;
 	}
 
-	protected double getEnd() {
+	protected float getEnd() {
 		return end;
 	}
 
-	protected void setEnd(double end) {
+	protected void setEnd(float end) {
 		this.end = end;
 	}
 

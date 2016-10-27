@@ -3,12 +3,14 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
@@ -20,6 +22,8 @@
             <TextField fx:id="txtSensorNumber" prefColumnCount="3" text="10" />
             <Label text="Increment By" />
             <TextField fx:id="txtSensorIncrement" prefColumnCount="3" text="-2" />
+            <Label text="Until" />
+            <TextField fx:id="txtSensorIncrementEnd" prefColumnCount="3" text="0" />
          </children>
          <VBox.margin>
             <Insets />
@@ -31,6 +35,8 @@
             <TextField fx:id="txtRadius" prefColumnCount="3" text="0.1" />
             <Label text="Increment By" />
             <TextField fx:id="txtRadiusIncrement" prefColumnCount="3" text="0.1" />
+            <Label text="Until" />
+            <TextField fx:id="txtRadiusIncrementEnd" prefColumnCount="3" text="0" />
          </children>
       </HBox>
       <HBox alignment="CENTER_LEFT" spacing="5.0">
@@ -58,7 +64,7 @@
       <HBox alignment="CENTER_LEFT" spacing="5.0">
          <children>
             <Label text="Number of Runs Per Value                               " />
-            <TextField fx:id="txtRuns" prefColumnCount="3" text="20" />
+            <TextField fx:id="txtNumberOfRuns" prefColumnCount="3" text="20" />
          </children>
          <VBox.margin>
             <Insets />
@@ -71,8 +77,12 @@
             <TextField fx:id="txtAnimationSpeed" prefColumnCount="3" text="500" />
          </children>
       </HBox>
-      <RadioButton mnemonicParsing="false" text="Move one sensor at a time." />
-      <RadioButton mnemonicParsing="false" text="Move all sensors at the same time" />
+      <RadioButton fx:id="rdbOneSensor" mnemonicParsing="false" selected="true" text="Move one sensor at a time.">
+         <toggleGroup>
+            <ToggleGroup fx:id="animation" />
+         </toggleGroup></RadioButton>
+      <RadioButton fx:id="rdbAllSensors" mnemonicParsing="false" text="Move all sensors at the same time" toggleGroup="$animation" />
+      <CheckBox fx:id="chkDisableAnimation" mnemonicParsing="false" text="Disable Animation (Makes things a lot faster)" />
       <ButtonBar prefHeight="40.0" prefWidth="200.0">
         <buttons>
           <Button fx:id="btnStart" defaultButton="true" mnemonicParsing="false" onAction="#btnStartAction" text="Start Expirement" />

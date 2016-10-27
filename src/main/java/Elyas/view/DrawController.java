@@ -1,6 +1,7 @@
 package Elyas.view;
 
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,8 +13,11 @@ import java.util.Random;
 import java.util.ResourceBundle;
 
 import Elyas.model.Sensor;
+import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
+import javafx.animation.ParallelTransition;
+import javafx.animation.SequentialTransition;
 import javafx.animation.Timeline;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -51,10 +55,10 @@ public class DrawController implements Initializable {
 	private double lineOffset = 20;
 	private double labelOffset = 10;
 	private Map<Sensor, Circle> sensors;
-	private Double currentRadius;
+	private double currentRadius;
 	private Random random;
-	private double rangeEnd;
-	private double rangeStart;
+	private float rangeEnd;
+	private float rangeStart;
 	private double sensorOffset = 10;
 
 	@Override
@@ -95,7 +99,7 @@ public class DrawController implements Initializable {
 		lblRangeEnd.setLayoutY(endLine.getEndY() + labelOffset);
 	}
 
-	public void setRange(double from, double to) {
+	public void setRange(float from, float to) {
 		rangeStart = from;
 		rangeEnd = to;
 		lblRangeStart.setText("" + from);
@@ -109,7 +113,7 @@ public class DrawController implements Initializable {
 		System.out.println("updating number of sensors: " + n);
 		while (n > sensors.size()) {
 			Sensor sensor = new Sensor();
-			sensor.setRadius(currentRadius);
+			sensor.setRadius((float)currentRadius);
 			Circle node = getDefaultSensorNode(sensor);
 			sensors.put(sensor, node);
 			drawPane.getChildren().add(node);
@@ -126,17 +130,21 @@ public class DrawController implements Initializable {
 			}
 		}
 		for (Sensor s : sensors.keySet()) {
-			s.setPosition(rangeStart + (rangeEnd - rangeStart) * random.nextDouble());
+			s.setPosition(getRandomPosition());
 
 		}
 		updateDrawing();
 	}
 
+	private float getRandomPosition() {
+		return rangeStart + (rangeEnd-rangeStart) * random.nextFloat();
+	}
+
 	private Circle getDefaultSensorNode(Sensor s) {
 		Circle circle;
-		if(sensors.get(s) != null){
+		if (sensors.get(s) != null) {
 			circle = sensors.get(s);
-		}else{
+		} else {
 			circle = new Circle();
 			circle.setCache(false);
 			circle.setOnMouseEntered((e) -> circle.setFill(Color.BLUE));
@@ -151,14 +159,14 @@ public class DrawController implements Initializable {
 			});
 			changeTooltipStartTiming(tooltip);
 			Tooltip.install(circle, tooltip);
-			
+
 		}
-		
+
 		circle.setFill(Color.RED);
 		circle.setStroke(Color.BLACK);
-		circle.setRadius(this.currentRadius * (rangeLine.getEndX()-rangeLine.getStartX()));
+		circle.setRadius(this.currentRadius * (rangeLine.getEndX() - rangeLine.getStartX()));
 		circle.setCenterY(rangeLine.getEndY());
-		
+
 		return circle;
 	}
 
@@ -179,7 +187,7 @@ public class DrawController implements Initializable {
 		drawPane.toBack();
 	}
 
-	public void setSensorRadius(Double i) {
+	public void setSensorRadius(float i) {
 		currentRadius = i;
 		for (Sensor sensor : sensors.keySet()) {
 			sensor.setRadius(i);
@@ -215,6 +223,7 @@ public class DrawController implements Initializable {
 	}
 
 	public void moveSensor(Sensor sensor, Double speed) {
+
 		Circle circle = sensors.get(sensor);
 		final Timeline timeline = new Timeline();
 		timeline.setCycleCount(1);
@@ -224,12 +233,46 @@ public class DrawController implements Initializable {
 		timeline.play();
 	}
 
+	public void moveSensors(List<Sensor> toMove, Double speed, boolean oneAtATime, EventHandler onFinish) {
+		Timeline[] timeLines = new Timeline[toMove.size()];
+		for (Sensor sensor : toMove) {
+			Circle circle = sensors.get(sensor);
+			final Timeline timeline = new Timeline();
+			timeline.setCycleCount(1);
+			final KeyValue kv = new KeyValue(circle.centerXProperty(), getDrawXLocation(sensor));
+			final KeyFrame kf = new KeyFrame(Duration.millis(speed), kv);
+			timeline.getKeyFrames().add(kf);
+			timeLines[toMove.indexOf(sensor)] = timeline;
+
+		}
+		Animation seq;
+		if (!oneAtATime) {
+			seq = new ParallelTransition(timeLines);
+		} else {
+			seq = new SequentialTransition(timeLines);
+		}
+		seq.setOnFinished(onFinish);
+		seq.play();
+	}
+
 	private double getDrawXLocation(Sensor sensor) {
 
 		return rangeLine.getStartX() + ((rangeLine.getEndX() - rangeLine.getStartX()) * sensor.getPosition());
 	}
 
-	public void setupDrawing() {
-		
+	public void randomizeSensors() {
+		for (Sensor sensor : sensors.keySet()) {
+			sensor.setPosition(getRandomPosition());
+		}
+		updateDrawing();
 	}
+
+	public float getSensorRadius() {
+		return (float)this.currentRadius;
+	}
+
+	public void setVisible(Boolean n) {
+		drawPane.setVisible(n);
+	}
+
 }

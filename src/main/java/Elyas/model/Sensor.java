@@ -1,34 +1,38 @@
 package Elyas.model;
 
+import java.math.BigDecimal;
+
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.FloatProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleFloatProperty;
 import javafx.beans.property.StringProperty;
 
 public class Sensor {
-	private double radius;
-	private DoubleProperty position;
+	private float radius;
+	private FloatProperty position;
 	
 	public Sensor(){
-		radius = 0.1;
-		position = new SimpleDoubleProperty(0.0);
+		radius = 0.1f;
+		position = new SimpleFloatProperty(0.0f);
 	}
-	public Sensor(double radius, double position){
+	public Sensor(float radius, float position){
 		this.radius = radius;
-		this.position = new SimpleDoubleProperty(position);
+		this.position = new SimpleFloatProperty(position);
 	}
-	public double getRadius() {
+	public float getRadius() {
 		return radius;
 	}
-	public void setRadius(double radius) {
+	public void setRadius(float radius) {
 		this.radius = radius;
 	}
-	public double getPosition() {
+	public float getPosition() {
 		return position.get();
 	}
-	public void setPosition(double position) {
-		this.position.set(position);
+	public void setPosition(float bigDecimal) {
+		this.position.set(bigDecimal);
 	}
-	public DoubleProperty positionProperty() {
+	public FloatProperty positionProperty() {
 		return position;
 	}
 	

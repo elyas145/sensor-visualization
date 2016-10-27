@@ -13,7 +13,7 @@ import Elyas.model.Sensor;
 
 public class BackToBack extends Algorithm {
 
-	public BackToBack(Collection<Sensor> sensors, double start, double end) {
+	public BackToBack(Collection<Sensor> sensors, float start, float end) {
 		super(sensors, start, end);
 	}
 
@@ -31,7 +31,7 @@ public class BackToBack extends Algorithm {
 			}
 		});
 
-		double currentEdge = getStart();
+		float currentEdge = getStart();
 		boolean done = false;
 		for (int i = 0; i < getSensors().size(); i++) {
 			Sensor curr = getSensors().get(i);
