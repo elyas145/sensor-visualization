@@ -71,7 +71,7 @@ public class ExpirementController implements Initializable {
 	private DrawController drawController;
 	private int currentRun = 0;
 	private int numberOfRuns = 0;
-
+	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		ObservableList<AxisType> xAxis = FXCollections.observableArrayList(AxisType.values());
@@ -79,19 +79,7 @@ public class ExpirementController implements Initializable {
 		cmbXAxis.valueProperty().addListener(new ChangeListener<AxisType>() {
 			@Override
 			public void changed(ObservableValue<? extends AxisType> observable, AxisType oldValue, AxisType newValue) {
-				switch (newValue) {
-				case NUMBER_OF_SENSORS:
-					txtRadiusIncrement.setDisable(true);
-					txtSensorIncrement.setDisable(false);
-					break;
-				case SENSOR_RADIUS:
-					txtRadiusIncrement.setDisable(false);
-					txtSensorIncrement.setDisable(true);
-					break;
-				default:
-					break;
-				}
-
+				setXAxis(newValue);
 			}
 		});
 		cmbXAxis.setValue(AxisType.NUMBER_OF_SENSORS);
@@ -144,6 +132,22 @@ public class ExpirementController implements Initializable {
 
 	}
 
+	protected void setXAxis(AxisType newValue) {
+		switch (newValue) {
+		case NUMBER_OF_SENSORS:
+			txtRadiusIncrement.setDisable(true);
+			txtSensorIncrement.setDisable(false);
+			break;
+		case SENSOR_RADIUS:
+			txtRadiusIncrement.setDisable(false);
+			txtSensorIncrement.setDisable(true);
+			break;
+		default:
+			break;
+		}
+		
+	}
+
 	@FXML
 	protected void btnStartAction(ActionEvent e) {
 		float from = Float.valueOf(this.txtRangeFrom.getText());
@@ -160,16 +164,16 @@ public class ExpirementController implements Initializable {
 	private void setControlsDisabled(boolean b) {
 		this.txtAnimationSpeed.setDisable(b);
 		this.txtNumberOfRuns.setDisable(b);
-		this.txtRadius.setDisable(b);
-		this.txtRadiusIncrement.setDisable(b);
-		this.txtSensorIncrement.setDisable(b);
+		this.txtRadius.setDisable(b);		
 		this.txtSensorIncrementEnd.setDisable(b);
 		this.txtSensorNumber.setDisable(b);
 		this.txtRadiusIncrementEnd.setDisable(b);
 		this.cmbXAxis.setDisable(b);
 		this.rdbAllSensors.setDisable(b);
 		this.rdbOneSensor.setDisable(b);
-		this.btnStart.setDisable(b);
+		this.btnStart.setDisable(b);		
+		
+		setXAxis(cmbXAxis.getValue());
 	}
 
 	private boolean initNextRun() {
