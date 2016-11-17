@@ -35,8 +35,8 @@ public class BackToBack extends Algorithm {
 		boolean done = false;
 		for (int i = 0; i < getSensors().size(); i++) {
 			Sensor curr = getSensors().get(i);
-			if (curr.getPosition() - curr.getRadius() != currentEdge) {
-				if (currentEdge + curr.getRadius() <= getEnd()) {
+			if (!equalPosition(curr.getPosition() - curr.getRadius(), currentEdge)) {
+				if (lessEqualPosition(currentEdge + curr.getRadius(), getEnd())) {
 					curr.setPosition(currentEdge + curr.getRadius());
 					super.addMove(curr);
 					currentEdge = curr.getPosition() + curr.getRadius();
@@ -51,7 +51,7 @@ public class BackToBack extends Algorithm {
 						// need to move anything.
 					}
 				}
-			}else{
+			} else {
 				currentEdge = curr.getPosition() + curr.getRadius();
 			}
 		}

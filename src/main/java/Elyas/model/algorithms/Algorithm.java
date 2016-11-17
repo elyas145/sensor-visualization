@@ -18,6 +18,42 @@ public abstract class Algorithm {
 	private List<FinishListener> finishListeners;
 	private float start;
 	private float end;
+	private float precision;
+
+	/**
+	 * returns true if a and b are equal with the set precision value.
+	 */
+	protected boolean equalPosition(float a, float b) {
+		if (a < b && a + precision < b) {
+			return false;
+		}
+		if (b < a && b + precision < a) {
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * returns true if a < b with the set precision value.
+	 */
+	protected boolean lessPosition(float a, float b) {
+		if (a < b && a + precision < b) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * returns true if a <= b with the set precision value.
+	 */
+	protected boolean lessEqualPosition(float a, float b) {
+
+		return lessPosition(a, b) || equalPosition(a, b);
+	}
+
+	protected void setPositionPrecision(float p) {
+		precision = p;
+	}
 
 	/**
 	 * 
@@ -29,28 +65,31 @@ public abstract class Algorithm {
 
 	/**
 	 * adds a listener to notify when a sensor move is made.
+	 * 
 	 * @param moveListener
 	 */
 	public void addMoveListener(MoveListener moveListener) {
 		moveListeners.add(moveListener);
 	}
-	
-	public void addFinishListener(FinishListener listener){
+
+	public void addFinishListener(FinishListener listener) {
 		finishListeners.add(listener);
 	}
 
 	/**
 	 * initializes the sensors to be used in this algorithm
+	 * 
 	 * @param sensors
-	 * @param end 
-	 * @param start 
+	 * @param end
+	 * @param start
 	 */
 	protected Algorithm(Collection<Sensor> sensors, float start, float end) {
-		this.sensors = new ArrayList(sensors);
+		this.sensors = new ArrayList<Sensor>(sensors);
 		moveListeners = new ArrayList<>();
 		finishListeners = new ArrayList<>();
 		this.start = start;
 		this.end = end;
+		this.precision = 0.01f;
 	}
 
 	protected float getStart() {
@@ -70,8 +109,8 @@ public abstract class Algorithm {
 	}
 
 	/**
-	 * register that a move has been made to the sensor(s)
-	 * informs any listeners of the move.
+	 * register that a move has been made to the sensor(s) informs any listeners
+	 * of the move.
 	 */
 	protected void addMove(Sensor s) {
 		moves++;
@@ -88,12 +127,12 @@ public abstract class Algorithm {
 	}
 
 	/**
-	 * method to be called when the algorithm is ready to be run.
-	 * simple convenience method to run the algorithm in a separate thread.
-	 * notifies any finish listeners when the algorithm is finished executing.
+	 * method to be called when the algorithm is ready to be run. simple
+	 * convenience method to run the algorithm in a separate thread. notifies
+	 * any finish listeners when the algorithm is finished executing.
 	 */
 	public void startAlgorithm() {
-		Thread thread = new  Thread(()->{
+		Thread thread = new Thread(() -> {
 			toDo();
 			notifyFinish();
 		});
@@ -104,16 +143,15 @@ public abstract class Algorithm {
 	 * notifies any listeners that the algorithm has finished executing.
 	 */
 	private void notifyFinish() {
-		for(FinishListener finishListener : finishListeners){
+		for (FinishListener finishListener : finishListeners) {
 			finishListener.onFinish();
 		}
 	}
 
 	/**
-	 * the main algorithm function.
-	 * anything the algorithm does goes in this function.
-	 * this function will be run in a separate thread.
+	 * the main algorithm function. anything the algorithm does goes in this
+	 * function. this function will be run in a separate thread.
 	 */
 	protected abstract void toDo();
-	
+
 }

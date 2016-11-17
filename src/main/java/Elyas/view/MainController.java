@@ -39,7 +39,6 @@ public class MainController implements Initializable {
 			expirementTab.setContent(pnlExperiment);
 			graphsTab.setContent(pnlGraphs);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

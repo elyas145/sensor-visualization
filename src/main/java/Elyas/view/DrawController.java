@@ -19,6 +19,7 @@ import javafx.animation.KeyValue;
 import javafx.animation.ParallelTransition;
 import javafx.animation.SequentialTransition;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -110,10 +111,9 @@ public class DrawController implements Initializable {
 		if (n == sensors.size()) {
 			return;
 		}
-		System.out.println("updating number of sensors: " + n);
 		while (n > sensors.size()) {
 			Sensor sensor = new Sensor();
-			sensor.setRadius((float)currentRadius);
+			sensor.setRadius((float) currentRadius);
 			Circle node = getDefaultSensorNode(sensor);
 			sensors.put(sensor, node);
 			drawPane.getChildren().add(node);
@@ -137,7 +137,7 @@ public class DrawController implements Initializable {
 	}
 
 	private float getRandomPosition() {
-		return rangeStart + (rangeEnd-rangeStart) * random.nextFloat();
+		return rangeStart + (rangeEnd - rangeStart) * random.nextFloat();
 	}
 
 	private Circle getDefaultSensorNode(Sensor s) {
@@ -154,7 +154,7 @@ public class DrawController implements Initializable {
 			s.positionProperty().addListener(new ChangeListener<Number>() {
 				@Override
 				public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-					tooltip.setText(newValue.doubleValue() + "");
+					Platform.runLater(() -> tooltip.setText(newValue.doubleValue() + ""));
 				}
 			});
 			changeTooltipStartTiming(tooltip);
@@ -268,7 +268,7 @@ public class DrawController implements Initializable {
 	}
 
 	public float getSensorRadius() {
-		return (float)this.currentRadius;
+		return (float) this.currentRadius;
 	}
 
 	public void setVisible(Boolean n) {

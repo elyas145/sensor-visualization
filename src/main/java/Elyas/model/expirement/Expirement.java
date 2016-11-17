@@ -1,28 +1,33 @@
 package Elyas.model.expirement;
 
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 public class Expirement {
-	/*
-	 * list: the values are kept for every iteration. usefull for viewing the
-	 * data, but uses more memory. should not be used for large numbers.
-	 * 
-	 * average: only stores the average of all the iterations. easier on memory,
-	 * but data not available for display.
-	 */
-	public static enum Type {
-		LIST, AVERAGE
-	};
-	
-	//strategy pattern, to set the proper type of data stored.
-	private ExpirementType expirement;
-	
-	String x;
-	String y;
 
-	public Expirement(String x, String y, Type type){
+	private String x;
+	private String y;
+	private int runs;
+	private Map<Integer, Integer> moves;
+
+	public Expirement(String x, String y, int runsPerValue) {
 		this.x = x;
 		this.y = y;
+		this.runs = runsPerValue;
+		moves = new HashMap<>();
+	}
+
+	public void addValue(Integer numberOfSensors, Integer moves, Integer currentRun) {
+		if (this.moves.containsKey(numberOfSensors)) {
+			int m = this.moves.get(numberOfSensors) + moves;
+			this.moves.put(numberOfSensors, m);
+		} else {
+			this.moves.put(numberOfSensors, moves);
+		}
+		if (currentRun >= runs) {
+			int m = this.moves.get(numberOfSensors) / runs;
+			this.moves.put(numberOfSensors, m);
+		}
+
 	}
 }
