@@ -8,6 +8,7 @@ import java.util.ResourceBundle;
 import Elyas.model.Sensor;
 import Elyas.model.algorithms.Algorithm;
 import Elyas.model.algorithms.BackToBack;
+import Elyas.model.expirement.Expirement;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -109,8 +110,10 @@ public class ExpirementController implements Initializable {
 		drawController.setNumberOfSensors(Integer.valueOf(this.txtSensorNumber.getText()));
 		drawController.setSensorRadius(calculateRadius());
 		setControlsDisabled(true);
+		
+		Expirement expirement = new Expirement("Number of Moves", "Number of Sensors", numberOfRuns);
 		this.txtLog.appendText("\nPlease Wait...\n");
-		runAlgorithm(from, to);
+		runAlgorithm(from, to, numberOfRuns, expirement);
 
 	}
 
@@ -157,7 +160,7 @@ public class ExpirementController implements Initializable {
 		return true;
 	}
 
-	private void runAlgorithm(final float from, final float to) {
+	private void runAlgorithm(final float from, final float to,int numberOfRuns, Expirement expirement) {
 		List<Sensor> toMove = new ArrayList<>();
 		Algorithm algorithm = new BackToBack(drawController.getSensors(), from, to);
 		algorithm.addMoveListener((sensor) -> {
@@ -165,6 +168,7 @@ public class ExpirementController implements Initializable {
 				@Override
 				public void run() {
 					toMove.add(sensor);
+					expirement.addValue(drawController.getSensors().size(), numberOfRuns, currentRun);
 				}
 			});
 		});
