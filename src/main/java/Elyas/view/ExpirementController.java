@@ -59,6 +59,7 @@ public class ExpirementController implements Initializable {
 	private DrawController drawController;
 	private int currentRun = 0;
 	private int numberOfRuns = 0;
+	private ExpirementFinishListener expirementFinishListener;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -89,8 +90,8 @@ public class ExpirementController implements Initializable {
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
 				try {
-					drawController.setNumberOfSensors(Integer.valueOf(newValue));
-					drawController.setSensorRadius(calculateRadius());
+					drawController.setNumberOfSensors(Integer.valueOf(newValue), !chkDisableAnimation.isSelected());
+					drawController.setSensorRadius(calculateRadius(), !chkDisableAnimation.isSelected());
 				} catch (Exception e) {
 					txtSensorNumber.setText("");
 				}
@@ -107,12 +108,15 @@ public class ExpirementController implements Initializable {
 		float to = Float.valueOf(this.txtRangeTo.getText());
 		numberOfRuns = Integer.valueOf(this.txtNumberOfRuns.getText());
 		currentRun = 1;
-		drawController.setNumberOfSensors(Integer.valueOf(this.txtSensorNumber.getText()));
-		drawController.setSensorRadius(calculateRadius());
+		drawController.setNumberOfSensors(Integer.valueOf(this.txtSensorNumber.getText()),
+				!chkDisableAnimation.isSelected());
+		drawController.setSensorRadius(calculateRadius(), !chkDisableAnimation.isSelected());
 		setControlsDisabled(true);
-		
-		Expirement expirement = new Expirement("Number of Moves", "Number of Sensors", numberOfRuns);
+
+		Expirement expirement = new Expirement(this.txtRadius.getText(), "Number of Sensors", "Number of Moves",
+				numberOfRuns);
 		this.txtLog.appendText("\nPlease Wait...\n");
+		this.txtLog.appendText("Progress: 0 / " + numberOfRuns + "\n");
 		runAlgorithm(from, to, numberOfRuns, expirement);
 
 	}
@@ -136,7 +140,7 @@ public class ExpirementController implements Initializable {
 
 	private boolean initNextRun() {
 		if (currentRun++ < numberOfRuns) {
-			drawController.randomizeSensors();
+			drawController.randomizeSensors(!chkDisableAnimation.isSelected());
 			return true;
 		}
 
@@ -153,14 +157,14 @@ public class ExpirementController implements Initializable {
 			}
 		}
 		numberOfSensors += incrementSensor;
-		drawController.setNumberOfSensors(numberOfSensors);
+		drawController.setNumberOfSensors(numberOfSensors, !chkDisableAnimation.isSelected());
 
 		currentRun = 1;
-		drawController.randomizeSensors();
+		drawController.randomizeSensors(!chkDisableAnimation.isSelected());
 		return true;
 	}
 
-	private void runAlgorithm(final float from, final float to,int numberOfRuns, Expirement expirement) {
+	private void runAlgorithm(final float from, final float to, int numberOfRuns, Expirement expirement) {
 		List<Sensor> toMove = new ArrayList<>();
 		Algorithm algorithm = new BackToBack(drawController.getSensors(), from, to);
 		algorithm.addMoveListener((sensor) -> {
@@ -168,21 +172,24 @@ public class ExpirementController implements Initializable {
 				@Override
 				public void run() {
 					toMove.add(sensor);
-					expirement.addValue(drawController.getSensors().size(), numberOfRuns, currentRun);
+
 				}
 			});
 		});
 		algorithm.addFinishListener(() -> {
 			Platform.runLater(() -> {
-				
-				
+
 				EventHandler<ActionEvent> onFinish = (ae) -> {
 					if (initNextRun()) {
-						runAlgorithm(from, to);
+						runAlgorithm(from, to, numberOfRuns, expirement);
 					} else {
 						this.txtLog.appendText("Finished Expirement.");
 						this.setControlsDisabled(false);
+						if (expirementFinishListener != null) {
+							expirementFinishListener.onFinish(expirement);
+						}
 					}
+					expirement.addMove(drawController.getSensors().size(), toMove.size(), currentRun);
 				};
 				if (!this.chkDisableAnimation.isSelected()) {
 					txtLog.appendText("algorithm finished with " + algorithm.getNumberOfMoves() + " moves.\n");
@@ -202,6 +209,9 @@ public class ExpirementController implements Initializable {
 			txtLog.appendText("\nStarting Algorithm number " + currentRun + " out of " + numberOfRuns + "\n");
 
 			txtLog.appendText("Current number of sensors: " + drawController.getSensors().size() + "\n");
+		} else {
+			txtLog.replaceText(txtLog.getText().lastIndexOf("Progress:"), txtLog.getLength(), "Progress: " + currentRun
+					+ " / " + numberOfRuns + " for " + drawController.getSensors().size() + " sensors." + "\n");
 		}
 		algorithm.startAlgorithm();
 	}
@@ -209,9 +219,13 @@ public class ExpirementController implements Initializable {
 	public void initializeDrawing() {
 		drawController.setDrawableArea();
 		drawController.setRange(Float.valueOf(txtRangeFrom.getText()), Float.valueOf(txtRangeTo.getText()));
-		drawController.setSensorRadius(calculateRadius());
-		drawController.setNumberOfSensors(Integer.valueOf(txtSensorNumber.getText()));
+		drawController.setSensorRadius(calculateRadius(), true);
+		drawController.setNumberOfSensors(Integer.valueOf(txtSensorNumber.getText()), true);
 
+	}
+
+	public void setFinishListener(ExpirementFinishListener listener) {
+		this.expirementFinishListener = listener;
 	}
 
 }

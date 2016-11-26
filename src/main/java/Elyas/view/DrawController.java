@@ -107,7 +107,7 @@ public class DrawController implements Initializable {
 		lblRangeEnd.setText("" + to);
 	}
 
-	public void setNumberOfSensors(int n) {
+	public void setNumberOfSensors(int n, boolean redraw) {
 		if (n == sensors.size()) {
 			return;
 		}
@@ -116,8 +116,9 @@ public class DrawController implements Initializable {
 			sensor.setRadius((float) currentRadius);
 			Circle node = getDefaultSensorNode(sensor);
 			sensors.put(sensor, node);
-			drawPane.getChildren().add(node);
-
+			if (redraw) {
+				drawPane.getChildren().add(node);
+			}
 		}
 		if (n < sensors.size()) {
 			for (Iterator<Sensor> iterator = sensors.keySet().iterator(); iterator.hasNext();) {
@@ -133,7 +134,9 @@ public class DrawController implements Initializable {
 			s.setPosition(getRandomPosition());
 
 		}
-		updateDrawing();
+		if (redraw) {
+			updateDrawing();
+		}
 	}
 
 	private float getRandomPosition() {
@@ -187,12 +190,15 @@ public class DrawController implements Initializable {
 		drawPane.toBack();
 	}
 
-	public void setSensorRadius(float i) {
+	public void setSensorRadius(float i, boolean redraw) {
 		currentRadius = i;
 		for (Sensor sensor : sensors.keySet()) {
 			sensor.setRadius(i);
 		}
-		updateDrawing();
+		if (redraw) {
+			updateDrawing();
+		}
+
 	}
 
 	/**
@@ -260,11 +266,13 @@ public class DrawController implements Initializable {
 		return rangeLine.getStartX() + ((rangeLine.getEndX() - rangeLine.getStartX()) * sensor.getPosition());
 	}
 
-	public void randomizeSensors() {
+	public void randomizeSensors(boolean redraw) {
 		for (Sensor sensor : sensors.keySet()) {
 			sensor.setPosition(getRandomPosition());
 		}
-		updateDrawing();
+		if (redraw) {
+			updateDrawing();
+		}
 	}
 
 	public float getSensorRadius() {
@@ -273,6 +281,7 @@ public class DrawController implements Initializable {
 
 	public void setVisible(Boolean n) {
 		drawPane.setVisible(n);
+		updateDrawing();
 	}
 
 }
