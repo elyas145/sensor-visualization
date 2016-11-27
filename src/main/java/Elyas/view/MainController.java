@@ -4,25 +4,32 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import Elyas.model.expirement.Expirement;
+import Elyas.model.expirement.Experiment;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.Tab;
 
+/**
+ * 
+ * @author Elyas Syoufi
+ *         <p>
+ *         main controller. responsible for linking between the graph and the
+ *         experiment and loading the proper controllers.
+ *         </p>
+ */
 public class MainController implements Initializable {
 
 	@FXML
 	private Tab expirementTab;
 	@FXML
 	private Tab graphsTab;
-	
+
 	private GraphsController graphsController;
 	private ExpirementController expirementController;
 
 	public boolean shutdown() {
-		// TODO Auto-generated method stub
 		return true;
 	}
 
@@ -32,7 +39,7 @@ public class MainController implements Initializable {
 			FXMLLoader experimentldr = new FXMLLoader(getClass().getResource("/fxml/expirement.fxml"));
 			Parent pnlExperiment = (Parent) experimentldr.load();
 			expirementController = (ExpirementController) experimentldr.getController();
-			expirementController.setFinishListener((expirement)->setGraph(expirement));
+			expirementController.setFinishListener((expirement) -> setGraph(expirement));
 			FXMLLoader graphldr = new FXMLLoader(getClass().getResource("/fxml/graphs.fxml"));
 			Parent pnlGraphs = (Parent) graphldr.load();
 			graphsController = (GraphsController) graphldr.getController();
@@ -45,10 +52,19 @@ public class MainController implements Initializable {
 
 	}
 
-	private void setGraph(Expirement expirement) {
-		graphsController.setGraph(expirement);
+	/**
+	 * calls the graph controller to graph the given experiment
+	 * 
+	 * @param experiment
+	 *            the experiment to graph.
+	 */
+	private void setGraph(Experiment experiment) {
+		graphsController.setGraph(experiment);
 	}
 
+	/**
+	 * initializes the experiment visualization area.
+	 */
 	public void initializeDrawArea() {
 		expirementController.initializeDrawing();
 	}

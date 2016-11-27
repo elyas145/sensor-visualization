@@ -1,8 +1,3 @@
-/**
- * This algorithm puts all the sensors back to back, without any overlay. 
- * if there are too many sensors, then the sensors that are not needed are not moved. 
- * if there are no enough sensors, then all the uncovered area will be at the end of the range.
- */
 package Elyas.model.algorithms;
 
 import java.util.Collection;
@@ -11,14 +6,35 @@ import java.util.List;
 
 import Elyas.model.Sensor;
 
+/**
+ * @author Elyas Syoufi
+ *         <p>
+ *         This algorithm puts all the sensors back to back, without any overlay
+ *         (given the precision value). if there are too many sensors, then the
+ *         sensors that are not needed are not moved. if there are not enough
+ *         sensors, then all the uncovered area will be at the end of the range.
+ *         </p>
+ * @see Algorithm.setPositionPrecision(float p)
+ */
 public class BackToBack extends Algorithm {
 
+	/**
+	 * main constructor
+	 * 
+	 * @param sensors
+	 *            collection of sensors to use in this algorithm
+	 * @param start
+	 *            the start position. typically 0.0
+	 * @param end
+	 *            the end position. typically 1.0
+	 */
 	public BackToBack(Collection<Sensor> sensors, float start, float end) {
 		super(sensors, start, end);
 	}
 
 	@Override
 	protected void toDo() {
+		//sort the sensors based on their current random position.
 		getSensors().sort(new Comparator<Sensor>() {
 			@Override
 			public int compare(Sensor o1, Sensor o2) {
@@ -31,7 +47,7 @@ public class BackToBack extends Algorithm {
 			}
 		});
 
-		float currentEdge = getStart();
+		float currentEdge = getStart(); //the current edge of the previous sensor
 		boolean done = false;
 		for (int i = 0; i < getSensors().size(); i++) {
 			Sensor curr = getSensors().get(i);
