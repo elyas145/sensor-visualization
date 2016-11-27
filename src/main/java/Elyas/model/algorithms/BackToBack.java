@@ -14,7 +14,7 @@ import Elyas.model.Sensor;
  *         sensors that are not needed are not moved. if there are not enough
  *         sensors, then all the uncovered area will be at the end of the range.
  *         </p>
- * @see Algorithm.setPositionPrecision(float p)
+ * @see #setPositionPrecision(float)
  */
 public class BackToBack extends Algorithm {
 

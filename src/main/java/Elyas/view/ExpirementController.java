@@ -279,7 +279,7 @@ public class ExpirementController implements Initializable {
 	/**
 	 * allows an observer to be notified when the experiment is finished.
 	 * 
-	 * @param listener
+	 * @param listener the listener to trigger
 	 */
 	public void setFinishListener(ExpirementFinishListener listener) {
 		this.expirementFinishListener = listener;

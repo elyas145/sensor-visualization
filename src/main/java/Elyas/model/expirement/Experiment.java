@@ -36,8 +36,12 @@ public class Experiment {
 	 * added to the last value of moves.
 	 * 
 	 * @param numberOfSensors
+	 *            the current number of sensors
 	 * @param numberOfMoves
+	 *            the number of moves taken to cover the range
 	 * @param currentRun
+	 *            the current run the algorithm was run with this number of
+	 *            sensors
 	 */
 	public void addMove(Integer numberOfSensors, Integer numberOfMoves, Integer currentRun) {
 		if (this.moves.containsKey(numberOfSensors)) {

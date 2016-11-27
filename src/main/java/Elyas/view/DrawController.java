@@ -286,7 +286,7 @@ public class DrawController implements Initializable {
 	/**
 	 * moves the GUI node associated with this sensor to the sensor's location.
 	 * 
-	 * @see moveSensors()
+	 * @see #moveSensors(List, Double, boolean, EventHandler)
 	 * @param sensor
 	 *            the sensor that the node is associated with
 	 * @param speed

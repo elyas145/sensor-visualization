@@ -98,7 +98,7 @@ public abstract class Algorithm {
 	/**
 	 * adds a listener to notify when a sensor move is made.
 	 * 
-	 * @param moveListener
+	 * @param moveListener the listener to trigger
 	 */
 	public void addMoveListener(MoveListener moveListener) {
 		moveListeners.add(moveListener);
@@ -107,7 +107,7 @@ public abstract class Algorithm {
 	/**
 	 * add a listener to notify when the algorithm is completed.
 	 * 
-	 * @param listener
+	 * @param listener the listener to trigger 
 	 */
 	public void addFinishListener(FinishListener listener) {
 		finishListeners.add(listener);
