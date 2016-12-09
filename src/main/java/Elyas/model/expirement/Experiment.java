@@ -80,7 +80,6 @@ public class Experiment {
 			float m = this.distances.get(numberOfSensors) + distance;
 			this.distances.put(numberOfSensors, m);
 		} else {
-			System.out.println("new distance (" + numberOfSensors + "): " + distance);
 			this.distances.put(numberOfSensors, distance);
 		}
 		if (currentRun >= runs) {
