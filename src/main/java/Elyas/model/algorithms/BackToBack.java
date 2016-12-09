@@ -53,14 +53,16 @@ public class BackToBack extends Algorithm {
 			Sensor curr = getSensors().get(i);
 			if (!equalPosition(curr.getPosition() - curr.getRadius(), currentEdge)) {
 				if (lessEqualPosition(currentEdge + curr.getRadius(), getEnd())) {
+					float difference = getDistanceTravelled(curr.getPosition(), currentEdge + curr.getRadius());
 					curr.setPosition(currentEdge + curr.getRadius());
-					super.addMove(curr);
+					super.addMove(curr, difference);
 					currentEdge = curr.getPosition() + curr.getRadius();
 				} else {
 					if (!done) {
+						float difference = getDistanceTravelled(curr.getPosition(), getEnd() - curr.getRadius());
 						curr.setPosition(getEnd() - curr.getRadius());
 						done = true;
-						super.addMove(curr);
+						super.addMove(curr, difference);
 						currentEdge = getEnd();
 					} else {
 						// whole range is covered. we have too many sensors. no
@@ -72,5 +74,7 @@ public class BackToBack extends Algorithm {
 			}
 		}
 	}
+
+	
 
 }

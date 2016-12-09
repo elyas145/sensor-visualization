@@ -21,7 +21,10 @@ import javafx.scene.chart.XYChart.Series;
 public class GraphsController implements Initializable {
 
 	@FXML
-	LineChart<Integer, Integer> graph;
+	LineChart<Integer, Integer> moveGraph;
+	
+	@FXML
+	LineChart<Integer, Float> distanceGraph;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -35,17 +38,31 @@ public class GraphsController implements Initializable {
 	 *            the experiment to plot
 	 */
 	public void setGraph(Experiment experiment) {
-		graph.getXAxis().setLabel(experiment.getX());
-		graph.getYAxis().setLabel(experiment.getY());
-		graph.setTitle("Coverage using f(n) = " + experiment.getFN());
+		moveGraph.getXAxis().setLabel(experiment.getX());
+		moveGraph.getYAxis().setLabel(experiment.getY());
+		moveGraph.setTitle("Moves Used to Cover Range using f(n) = " + experiment.getFN());
 
 		Series<Integer, Integer> series = new Series<>();
 		for (Integer x : experiment.getMoves().keySet()) {
 
 			series.getData().add(new Data<>(x, experiment.getMoves().get(x)));
 		}
-		graph.getData().clear();
-		graph.getData().add(series);
+		moveGraph.getData().clear();
+		moveGraph.getData().add(series);
+		
+		distanceGraph.getXAxis().setLabel(experiment.getX());
+		distanceGraph.getYAxis().setLabel("Distance Traveled");
+		distanceGraph.setTitle("Total Distance Used to Cover Range using f(n) = " + experiment.getFN());
+
+		Series<Integer, Float> series2 = new Series<>();
+		for (Integer x : experiment.getDistances().keySet()) {
+
+			series2.getData().add(new Data<>(x, experiment.getDistances().get(x)));
+		}
+		distanceGraph.getData().clear();
+		distanceGraph.getData().add(series2);
+		
+		
 	}
 
 }

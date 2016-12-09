@@ -60,7 +60,7 @@ public class ExpirementController implements Initializable {
 	@FXML
 	TextField txtNumberOfRuns; // number of runs per sensor number
 	@FXML
-	TextField txtSensorIncrementEnd; // end case for the expirement. when to
+	TextField txtSensorIncrementEnd; // end case for the experiment. when to
 										// stop incrementing the sensors
 	@FXML
 	Button btnStart; // starts the experiment
@@ -213,12 +213,12 @@ public class ExpirementController implements Initializable {
 
 		Algorithm algorithm = new BackToBack(drawController.getSensors(), from, to);
 		// add the sensor to the move queue
-		algorithm.addMoveListener((sensor) -> {
+		algorithm.addMoveListener((sensor, distance) -> {
 			Platform.runLater(new Runnable() {
 				@Override
 				public void run() {
 					toMove.add(sensor);
-
+					expirement.addDistance(drawController.getSensors().size(), distance, currentRun);
 				}
 			});
 		});

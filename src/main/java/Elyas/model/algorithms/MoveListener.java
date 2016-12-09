@@ -11,5 +11,5 @@ import Elyas.model.Sensor;
  *         </p>
  */
 public interface MoveListener {
-	public void onMove(Sensor s);
+	public void onMove(Sensor s, float difference);
 }

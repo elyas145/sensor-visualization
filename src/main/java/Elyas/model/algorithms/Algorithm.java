@@ -165,11 +165,12 @@ public abstract class Algorithm {
 	 * 
 	 * @param s
 	 *            the sensor that just moved.
+	 * @param difference The distance moved.
 	 */
-	protected void addMove(Sensor s) {
+	protected void addMove(Sensor s, float difference) {
 		moves++;
 		for (MoveListener listener : moveListeners) {
-			listener.onMove(s);
+			listener.onMove(s, difference);
 		}
 	}
 
@@ -178,6 +179,10 @@ public abstract class Algorithm {
 	 */
 	protected List<Sensor> getSensors() {
 		return sensors;
+	}
+	
+	protected float getDistanceTravelled(float from, float to) {
+		return Math.abs(to - from);
 	}
 
 	/**

@@ -20,6 +20,8 @@ public class Experiment {
 						// sensors
 	private Map<Integer, Integer> moves; // number of moves for the number of
 											// sensors
+	private Map<Integer, Float> distances;
+
 	private String fn; // the f(n) function for the radius of the sensors.
 
 	public Experiment(String fn, String x, String y, int runsPerValue) {
@@ -27,6 +29,7 @@ public class Experiment {
 		this.y = y;
 		this.runs = runsPerValue;
 		moves = new HashMap<>();
+		distances = new HashMap<>();
 		this.fn = fn;
 	}
 
@@ -55,6 +58,35 @@ public class Experiment {
 			this.moves.put(numberOfSensors, m);
 		}
 
+	}
+
+	/**
+	 * registers a distance to the number of sensors. if this is the last run,
+	 * then the average of the distances is calculated. otherwise it is just
+	 * added to the last value of distances.
+	 * 
+	 * @param numberOfSensors
+	 *            the current number of sensors
+	 * @param distance
+	 *            the taken taken to cover the range
+	 * @param currentRun
+	 *            the current run the algorithm was run with this number of
+	 *            sensors
+	 */
+	public void addDistance(Integer numberOfSensors, float distance, Integer currentRun) {
+
+		if (this.distances.containsKey(numberOfSensors)) {
+
+			float m = this.distances.get(numberOfSensors) + distance;
+			this.distances.put(numberOfSensors, m);
+		} else {
+			System.out.println("new distance (" + numberOfSensors + "): " + distance);
+			this.distances.put(numberOfSensors, distance);
+		}
+		if (currentRun >= runs) {
+			float m = this.distances.get(numberOfSensors) / runs;
+			this.distances.put(numberOfSensors, m);
+		}
 	}
 
 	public String getX() {
@@ -87,6 +119,14 @@ public class Experiment {
 
 	public void setMoves(Map<Integer, Integer> moves) {
 		this.moves = moves;
+	}
+
+	public Map<Integer, Float> getDistances() {
+		return distances;
+	}
+
+	public void setDistances(Map<Integer, Float> distances) {
+		this.distances = distances;
 	}
 
 	public String getFN() {
