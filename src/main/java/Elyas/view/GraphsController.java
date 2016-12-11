@@ -117,7 +117,6 @@ public class GraphsController implements Initializable {
 		for (Integer x : experiment.getDistances().keySet()) {
 
 			series2.getData().add(new Data<>(x, experiment.getDistances().get(x)));
-			System.out.println(experiment.getDistances().get(x));
 		}
 		distanceGraph.getData().clear();
 		distanceGraph.getData().add(series2);
